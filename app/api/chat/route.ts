@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_API_URL = 'http://127.0.0.1:8000/agent'; // Your FastAPI backend URL
+const BACKEND_API_URL = 'http://127.0.0.1:8000/agent/hr';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestData),
+      body: JSON.stringify({ query: requestData.message }),
     });
 
     if (!backendResponse.ok) {
