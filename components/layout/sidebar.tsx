@@ -19,9 +19,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 const navigation = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Pipelines", href: "/dashboard/pipelines", icon: GitBranch },
+  // { name: "Pipelines", href: "/dashboard/pipelines", icon: GitBranch },
   { name: "Agents", href: "/dashboard/agents", icon: Bot },
-  { name: "Templates", href: "/dashboard/templates", icon: FolderTemplate },
+  // { name: "Templates", href: "/dashboard/templates", icon: FolderTemplate },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 

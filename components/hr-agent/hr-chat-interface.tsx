@@ -14,6 +14,7 @@ import {
   Users,
   Calendar,
   HelpCircle,
+  Upload,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ interface Message {
 
 const suggestedQueries = [
   { icon: FileText, label: "Screen top candidates for Senior Engineer role" },
-  { icon: Users, label: "Show me candidates ready for final interview" },
+  { icon: Users, label: "Upload candidate resumes" },
   { icon: Calendar, label: "Schedule interviews for this week" },
   { icon: HelpCircle, label: "What's our current time-to-hire?" },
 ];
@@ -36,7 +37,7 @@ const initialMessages: Message[] = [
     id: 1,
     role: "assistant",
     content:
-      "Hello! I'm your HR Agent assistant. I can help you with resume screening, candidate management, interview scheduling, onboarding, and HR analytics. What would you like to do today?",
+      "Hello! I'm your HR Assistant. I can help you with resume screening, candidate management, interview scheduling, onboarding, and HR analytics. What would you like to do today?",
     timestamp: new Date(),
   },
 ];
@@ -75,6 +76,46 @@ export function HRChatInterface() {
 
     showNext();
   }
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (file: File) => {
+    setIsTyping(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/hr/upload-candidates", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          role: "assistant",
+          content: `Uploaded ${data.count} candidates successfully.`,
+          timestamp: new Date(),
+        },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          role: "assistant",
+          content: "Failed to upload candidates.",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -139,13 +180,13 @@ export function HRChatInterface() {
   const handleSuggestedQuery = (query: string) => setInput(query);
 
   return (
-    <div className="h-[calc(100vh-220px)] flex flex-col">
+    <div className="h-[calc(100vh-120px)] flex flex-col">
       <div className="mb-4">
         <h2 className="text-xl font-semibold text-foreground">
           Chat with HR Agent
         </h2>
         <p className="text-sm text-muted-foreground">
-          Ask questions or give commands to your HR assistant
+          Ask questions or give tasks to your HR assistant
         </p>
       </div>
 
@@ -156,7 +197,7 @@ export function HRChatInterface() {
               key={message.id}
               className={cn(
                 "flex gap-3",
-                message.role === "user" && "flex-row-reverse"
+                message.role === "user" && "flex-row-reverse",
               )}
             >
               <Avatar className="h-8 w-8 shrink-0">
@@ -164,7 +205,7 @@ export function HRChatInterface() {
                   className={cn(
                     message.role === "assistant"
                       ? "bg-primary/20 text-primary"
-                      : "bg-secondary text-foreground"
+                      : "bg-secondary text-foreground",
                   )}
                 >
                   {message.role === "assistant" ? (
@@ -180,7 +221,7 @@ export function HRChatInterface() {
                   "max-w-[70%] rounded-lg p-3",
                   message.role === "assistant"
                     ? "bg-secondary/50"
-                    : "bg-primary text-primary-foreground"
+                    : "bg-primary text-primary-foreground",
                 )}
               >
                 <p className="text-sm whitespace-pre-line">{message.content}</p>
@@ -242,6 +283,16 @@ export function HRChatInterface() {
         )}
 
         <div className="p-4 border-t border-border">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleFileUpload(file);
+            }}
+          />
           <div className="flex gap-2">
             <Input
               value={input}
@@ -252,6 +303,13 @@ export function HRChatInterface() {
             />
             <Button onClick={handleSend} size="icon" disabled={!input.trim()}>
               <Send className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="w-4 h-4" />
             </Button>
           </div>
 
