@@ -3,6 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html, body {
+  @apply bg-black text-white;
+}
 /* <CHANGE> Dark theme for Agentic AI Platform with emerald accent */
 :root {
   --background: oklch(0.13 0.005 260);

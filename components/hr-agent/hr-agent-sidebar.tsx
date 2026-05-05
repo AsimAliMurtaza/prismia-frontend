@@ -18,7 +18,7 @@ const menuItems = [
   { id: "interviews" as const, label: "Interviews", icon: Calendar },
   { id: "onboarding" as const, label: "Onboarding", icon: UserPlus },
   { id: "analytics" as const, label: "Analytics", icon: BarChart3 },
-  { id: "chat" as const, label: "Chat with Agent", icon: MessageSquare },
+  { id: "chat" as const, label: "Interact with Agent", icon: MessageSquare },
 ]
 
 export function HRAgentSidebar({ activeView, onViewChange }: HRAgentSidebarProps) {
