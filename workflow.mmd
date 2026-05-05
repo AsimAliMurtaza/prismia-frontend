@@ -1,0 +1,43 @@
+flowchart TD
+    A[Fetch Resumes] --> B[Extract Resume Content]
+    B --> C[Summarize / Vectorize Content]
+    C --> D[Rank Resumes Based on Role]
+    D --> E[Store Screened Resumes in DB]
+    E --> F[Optional: Feedback Loop for Learning]
+
+    subgraph Fetch
+        A1[From Email / Upload / Local Folder]
+        A --> A1
+    end
+
+    subgraph Extract
+        B1[Parse PDF / DOCX / TXT]
+        B2[Store text + metadata]
+        B --> B1 --> B2
+    end
+
+    subgraph Summarize
+        C1["Generate structured summary (skills, experience, projects)"]
+        C2[OR create embeddings for vector DB]
+        C --> C1
+        C --> C2
+    end
+
+    subgraph Rank
+        D1[Compare summary/embeddings with job requirements]
+        D2[Compute score / rank]
+        D3[Optional: LLM explains ranking]
+        D --> D1 --> D2 --> D3
+    end
+
+    subgraph Store
+        E1[DB table: screened_resumes]
+        E2[Include summary, score, path, date]
+        E --> E1 --> E2
+    end
+
+    subgraph Feedback
+        F1[Track shortlisted / rejected]
+        F2[Improve ranking or prompts]
+        F --> F1 --> F2
+    end

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_API_URL = 'http://127.0.0.1:8000/agent/hr';
+const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8000/agent/hr';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query: requestData.message }),
+      body: JSON.stringify({ session_id: "327a7123-a9b4-430b-999d-1a914fab3b8a", message: requestData.message }),
     });
 
     if (!backendResponse.ok) {

@@ -26,8 +26,8 @@ interface Message {
 }
 
 const suggestedQueries = [
-  { icon: FileText, label: "Screen top candidates for Senior Engineer role" },
-  { icon: Users, label: "Upload candidate resumes" },
+  { icon: FileText, label: "Run resume screening for Software Engineer role once" },
+  { icon: Users, label: "List all inactive candidates" },
   { icon: Calendar, label: "Schedule interviews for this week" },
   { icon: HelpCircle, label: "What's our current time-to-hire?" },
 ];
@@ -78,6 +78,7 @@ export function HRChatInterface() {
   }
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const AnyfileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (file: File) => {
     setIsTyping(true);
@@ -99,6 +100,44 @@ export function HRChatInterface() {
           id: Date.now(),
           role: "assistant",
           content: `Uploaded ${data.count} candidates successfully.`,
+          timestamp: new Date(),
+        },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          role: "assistant",
+          content: "Failed to upload candidates.",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleAnyFilesUpload = async (file: File) => {
+    setIsTyping(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/hr/upload-files", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          role: "assistant",
+          content: `Uploaded ${data.count} files successfully.`,
           timestamp: new Date(),
         },
       ]);
@@ -157,7 +196,7 @@ export function HRChatInterface() {
       const finalAiMessage: Message = {
         id: Date.now() + 9999,
         role: "assistant",
-        content: data.response || "Done",
+        content: data.response || "something went wrong. Please check your input and try again",
         timestamp: new Date(),
       };
 
@@ -293,6 +332,16 @@ export function HRChatInterface() {
               if (file) handleFileUpload(file);
             }}
           />
+          <input
+            ref={AnyfileInputRef}
+            type="file"
+            accept=".pdf,.doc,.docx,.txt,.csv"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleAnyFilesUpload(file);
+            }}
+          />
           <div className="flex gap-2">
             <Input
               value={input}
@@ -304,6 +353,7 @@ export function HRChatInterface() {
             <Button onClick={handleSend} size="icon" disabled={!input.trim()}>
               <Send className="w-4 h-4" />
             </Button>
+
             <Button
               variant="outline"
               size="icon"
@@ -311,6 +361,14 @@ export function HRChatInterface() {
             >
               <Upload className="w-4 h-4" />
             </Button>
+            {/* <Button
+              variant="default"
+              size="lg"
+              onClick={() => AnyfileInputRef.current?.click()}
+            >
+              Attach Files
+              <Upload className="w-4 h-4" />
+            </Button> */}
           </div>
 
           <div className="flex items-center gap-2 mt-2">

@@ -1,7 +1,6 @@
-import type React from "react"
-import type { Metadata } from "next"
+import type React from "react";
+import type { Metadata } from "next";
 import "./globals.css";
-
 import { Roboto } from "next/font/google";
 
 const roboto = Roboto({
@@ -10,10 +9,10 @@ const roboto = Roboto({
   variable: "--font-roboto",
 });
 
-
 export const metadata: Metadata = {
   title: "Prismia - Agentic AI Platform",
-  description: "Build and deploy intelligent AI agents through well-defined pipelines",
+  description:
+    "Build and deploy intelligent AI agents through well-defined pipelines",
   // icons: {
   //   icon: [
   //     {
@@ -31,12 +30,12 @@ export const metadata: Metadata = {
   //   ],
   //   apple: "/apple-icon.png",
   // },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" className="dark">
@@ -44,5 +43,5 @@ export default function RootLayout({
         {children}
       </body>
     </html>
-  )
+  );
 }
