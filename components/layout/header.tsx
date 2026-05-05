@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ThemeToggle } from "../ui/themeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface HeaderProps {
@@ -47,7 +48,7 @@ export function Header({ title, description }: HeaderProps) {
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
           </Button>
-
+            <ThemeToggle />
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
