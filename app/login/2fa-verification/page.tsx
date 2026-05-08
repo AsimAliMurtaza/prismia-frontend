@@ -61,8 +61,8 @@ function TwoFAVerificationContent() {
       router.push(signInResult?.url || callbackUrl);
 
       toast({ title: "Login successful" });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err : any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
       toast({
         title: "Error",
         description: err.message || "Verification failed",
@@ -74,50 +74,64 @@ function TwoFAVerificationContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <div className="w-full max-w-md bg-zinc-900 rounded-2xl shadow-md p-6 md:p-8">
-        
-        <div className="space-y-6">
-          
-          <h1 className="text-2xl font-semibold text-center text-teal-400">
+    <div className="min-h-screen flex items-center justify-center 
+      bg-background text-foreground px-4 transition-colors">
+
+      <div className="w-full max-w-md relative">
+
+        {/* Card */}
+        <div className="mt-10 rounded-2xl border border-border 
+          bg-card shadow-xl p-6 sm:p-8 transition-colors">
+
+          {/* Header */}
+          <h1 className="text-2xl font-semibold text-center">
             Verify Your Account
           </h1>
 
-          <p className="text-center text-zinc-400">
+          <p className="text-center text-sm text-muted-foreground mt-2">
             Enter the 6-digit code sent to{" "}
-            <span className="text-teal-400 font-medium">{email}</span>
+            <span className="text-primary font-medium">{email}</span>
           </p>
 
           {/* OTP Input */}
-          <input
-            value={otp}
-            onChange={(e) => {
-              const value = e.target.value.replace(/\D/g, "").slice(0, 6);
-              setOtp(value);
-            }}
-            type="text"
-            inputMode="numeric"
-            placeholder="ــــــ"
-            className="w-full text-center text-xl tracking-[1rem] py-3 rounded-full bg-zinc-800 border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-teal-400"
-          />
+          <div className="mt-6">
+            <input
+              value={otp}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+                setOtp(value);
+              }}
+              type="text"
+              inputMode="numeric"
+              placeholder="------"
+              className="w-full text-center text-xl tracking-[0.8rem]
+                py-3 rounded-xl
+                bg-secondary text-foreground
+                border border-border
+                focus:outline-none focus:ring-2 focus:ring-primary
+                transition"
+            />
+          </div>
 
           {/* Button */}
           <button
             onClick={handleVerify}
             disabled={loading || otp.length !== 6}
-            className="w-full py-2 rounded-full bg-teal-500 hover:bg-teal-600 disabled:opacity-50 transition"
+            className="w-full mt-5 py-2.5 rounded-lg
+              bg-primary text-primary-foreground
+              hover:opacity-90 transition
+              disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Verifying..." : "Verify & Continue"}
           </button>
 
           {/* Resend */}
-          <div className="text-center text-sm text-zinc-400">
-            Didn&apos;t receive a code?{" "}
-            <span className="text-teal-400 cursor-pointer hover:underline">
+          <div className="text-center text-sm text-muted-foreground mt-5">
+            Didn&rsquo;t receive a code?{" "}
+            <span className="text-primary cursor-pointer hover:underline">
               Resend Code
             </span>
           </div>
-
         </div>
       </div>
     </div>
@@ -128,7 +142,8 @@ export default function TwoFAVerification() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        <div className="min-h-screen flex items-center justify-center 
+          bg-background text-foreground">
           Loading verification...
         </div>
       }
