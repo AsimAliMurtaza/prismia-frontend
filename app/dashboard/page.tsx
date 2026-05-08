@@ -1,10 +1,10 @@
-import { Header } from "@/components/layout/header"
 import { StatsCard } from "@/components/dashboard/stats-card"
 import { ActivityFeed } from "@/components/dashboard/activity-feed"
 import { PipelineStatusChart } from "@/components/dashboard/pipeline-status-chart"
 import { QuickActions } from "@/components/dashboard/quick-actions"
 import { ActiveAgents } from "@/components/dashboard/active-agents"
 import { GitBranch, Bot, Zap, Clock } from "lucide-react"
+import { Header } from "@/components/layout/header"
 
 export default function DashboardPage() {
   return (

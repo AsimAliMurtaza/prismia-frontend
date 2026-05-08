@@ -11,18 +11,8 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const router = useRouter();
-
-  interface SessionData {
-    userEmail: string;
-    productPlan: string;
-    amount: number;
-    currency: string;
-    status: string;
-    creditsAdded?: number;
-    subscriptionPeriod?: string;
-  }
-
-  const [data, setData] = useState<SessionData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +21,6 @@ function SuccessContent() {
         const res = await fetch(
           `/api/stripe/checkout/success?session_id=${sessionId}`
         );
-        if (!res.ok) throw new Error();
         const json = await res.json();
         setData(json);
       } catch (err) {
@@ -44,128 +33,126 @@ function SuccessContent() {
     if (sessionId) fetchSessionData();
   }, [sessionId]);
 
-  const handleDashboardClick = () => {
-    router.push("/dashboard");
-  };
-
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 text-white">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-lg text-zinc-400">Verifying your payment...</p>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 bg-background text-foreground">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-muted-foreground">Verifying your payment...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-black text-white">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-background text-foreground">
       <MotionDiv
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
         className="w-full max-w-2xl"
       >
-        <div className="bg-zinc-900 rounded-3xl shadow-xl border border-zinc-700 overflow-hidden">
+        <div className="bg-card border border-border rounded-3xl shadow-xl overflow-hidden">
           
           {/* Header */}
-          <div className="bg-blue-500 py-4 px-6 flex items-center justify-center gap-3">
-            <span className="text-white text-2xl">✔</span>
-            <h2 className="text-lg font-semibold text-white">
-              Payment Successful!
-            </h2>
+          <div className="bg-primary text-primary-foreground py-4 px-6 flex items-center justify-center gap-3">
+            <span className="text-xl">✔</span>
+            <h2 className="font-semibold">Payment Successful</h2>
           </div>
 
           {/* Content */}
-          <div className="p-6 md:p-8">
+          <div className="p-6 md:p-8 space-y-6">
             
-            <p className="text-center text-zinc-300 mb-6">
-              Thank you for your purchase,{" "}
-              <span className="font-semibold text-white">
+            <p className="text-center text-muted-foreground">
+              Thank you,{" "}
+              <span className="font-medium text-foreground">
                 {data?.userEmail}
               </span>
               . Your account has been updated.
             </p>
 
             {/* Details */}
-            <div className="bg-blue-900/30 border border-zinc-700 p-6 rounded-xl space-y-4 mb-6">
+            <div className="bg-muted/40 border border-border rounded-xl p-5 space-y-4">
               
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Product:</span>
-                <span className="font-semibold">{data?.productPlan}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Amount:</span>
-                <span className="font-semibold">
-                  ${data?.amount ? (data.amount / 100).toFixed(2) : "0.00"}{" "}
-                  {data?.currency?.toUpperCase()}
-                </span>
-              </div>
+              <Row label="Product" value={data?.productPlan} />
+              
+              <Row
+                label="Amount"
+                value={`$${(data?.amount / 100).toFixed(2)} ${data?.currency?.toUpperCase()}`}
+              />
 
               {data?.creditsAdded && (
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">Credits Added:</span>
-                  <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-sm">
-                    +{data.creditsAdded}
-                  </span>
-                </div>
+                <Row
+                  label="Credits"
+                  value={`+${data.creditsAdded}`}
+                  highlight="success"
+                />
               )}
 
               {data?.subscriptionPeriod && (
-                <div className="flex justify-between">
-                  <span className="text-zinc-400">Subscription:</span>
-                  <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-md text-sm">
-                    {data.subscriptionPeriod}
-                  </span>
-                </div>
+                <Row
+                  label="Subscription"
+                  value={data.subscriptionPeriod}
+                  highlight="info"
+                />
               )}
 
-              <div className="flex justify-between">
-                <span className="text-zinc-400">Status:</span>
-                <span
-                  className={`px-2 py-1 rounded-md text-sm ${
-                    data?.status === "complete"
-                      ? "bg-green-500/20 text-green-400"
-                      : "bg-yellow-500/20 text-yellow-400"
-                  }`}
-                >
-                  {data?.status}
-                </span>
-              </div>
+              <Row
+                label="Status"
+                value={data?.status}
+                highlight={data?.status === "complete" ? "success" : "warning"}
+              />
             </div>
 
-            <div className="border-t border-zinc-700 my-6" />
-
             {/* Actions */}
-            <div className="flex flex-col md:flex-row gap-4 justify-center">
-              
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
-                onClick={handleDashboardClick}
-                className="px-6 py-2 rounded-full bg-blue-500 hover:bg-blue-600 transition shadow-md hover:-translate-y-0.5"
+                onClick={() => router.push("/dashboard")}
+                className="px-6 py-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition"
               >
                 Go to Dashboard
               </button>
 
               <Link href="/dashboard/transactions">
-                <button className="px-6 py-2 rounded-full border border-zinc-600 hover:bg-zinc-800 transition hover:-translate-y-0.5">
+                <button className="px-6 py-2 rounded-full border border-border hover:bg-muted transition">
                   View Transactions
                 </button>
               </Link>
-
             </div>
           </div>
         </div>
 
-        {/* Help */}
-        <p className="mt-8 text-center text-sm text-zinc-400">
+        <p className="mt-8 text-center text-sm text-muted-foreground">
           Need help?{" "}
-          <Link href="/support">
-            <span className="text-blue-400 hover:underline cursor-pointer">
-              Contact our support team
-            </span>
+          <Link href="/support" className="text-primary hover:underline">
+            Contact support
           </Link>
         </p>
       </MotionDiv>
+    </div>
+  );
+}
+
+/* Small reusable row */
+function Row({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value?: string;
+  highlight?: "success" | "warning" | "info";
+}) {
+  const color =
+    highlight === "success"
+      ? "text-green-500"
+      : highlight === "warning"
+      ? "text-yellow-500"
+      : highlight === "info"
+      ? "text-blue-500"
+      : "text-foreground";
+
+  return (
+    <div className="flex justify-between items-center text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className={`font-medium ${color}`}>{value}</span>
     </div>
   );
 }
@@ -174,9 +161,8 @@ export default function SuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white gap-4">
-          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-zinc-400">Loading your payment details...</p>
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

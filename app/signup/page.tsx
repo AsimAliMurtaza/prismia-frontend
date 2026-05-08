@@ -51,19 +51,19 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4 transition-colors duration-300">
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-4xl"
       >
-        <div className="bg-zinc-900 rounded-2xl shadow-lg p-8">
+        <div className="bg-card text-card-foreground rounded-2xl shadow-lg p-8 border border-border">
           
           {/* Back Button */}
           <button
             onClick={() => router.push("/")}
-            className="text-blue-400 hover:text-blue-300 text-sm flex items-center mb-4"
+            className="text-primary hover:opacity-80 text-sm flex items-center mb-4"
           >
             <FiArrowLeft className="mr-2 text-xl" />
           </button>
@@ -73,7 +73,7 @@ export default function SignUpPage() {
             {/* Left */}
             <div className="flex flex-col items-center justify-center text-center">
               <h1 className="text-4xl font-thin mb-4">Prismia</h1>
-              <p className="text-sm text-zinc-400 mt-2">
+              <p className="text-muted-foreground text-sm">
                 Create an account to get started.
               </p>
             </div>
@@ -85,7 +85,7 @@ export default function SignUpPage() {
               <div className="flex justify-end">
                 <button
                   onClick={toggleTheme}
-                  className="p-2 rounded-full hover:bg-zinc-700"
+                  className="p-2 rounded-full hover:bg-muted transition"
                 >
                   {theme === "dark" ? <FiSun /> : <FiMoon />}
                 </button>
@@ -111,23 +111,27 @@ export default function SignUpPage() {
                     
                     {/* Email */}
                     <div>
-                      <label className="text-sm text-zinc-400">Email</label>
+                      <label className="text-sm text-muted-foreground">
+                        Email
+                      </label>
                       <input
                         type="email"
                         placeholder="Enter your email"
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full mt-1 px-4 py-2 rounded-full bg-zinc-800 border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full mt-1 px-4 py-2 rounded-full bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
 
                     {/* Password */}
                     <div>
-                      <label className="text-sm text-zinc-400">Password</label>
+                      <label className="text-sm text-muted-foreground">
+                        Password
+                      </label>
                       <input
                         type="password"
                         placeholder="Enter your password"
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full mt-1 px-4 py-2 rounded-full bg-zinc-800 border border-zinc-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full mt-1 px-4 py-2 rounded-full bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
 
@@ -135,19 +139,19 @@ export default function SignUpPage() {
                     <button
                       onClick={handleSignup}
                       disabled={loading}
-                      className="w-full py-2 rounded-full bg-teal-500 hover:bg-teal-600 transition text-white"
+                      className="w-full py-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition"
                     >
                       {loading ? "Creating..." : "Sign Up"}
                     </button>
 
-                    <div className="border-t border-zinc-700" />
+                    <div className="border-t border-border" />
 
                     {/* Login */}
-                    <p className="text-sm text-center text-zinc-400">
+                    <p className="text-sm text-center text-muted-foreground">
                       Already have an account?{" "}
                       <span
                         onClick={() => router.push("/login")}
-                        className="text-blue-400 cursor-pointer hover:underline"
+                        className="text-primary cursor-pointer hover:underline"
                       >
                         Log in
                       </span>

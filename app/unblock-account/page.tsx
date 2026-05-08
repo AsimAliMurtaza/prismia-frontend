@@ -18,6 +18,12 @@ function UnblockAccountContent() {
   const { toast } = useToast();
 
   const handleUnblock = async () => {
+    if (!token) {
+      setStatus("error");
+      setMessage("Invalid or missing token");
+      return;
+    }
+
     setStatus("loading");
 
     try {
@@ -34,72 +40,63 @@ function UnblockAccountContent() {
       setMessage(data.message);
 
       toast({
-        title: "Account Unblocked!",
+        title: "Account Unblocked",
         description: "Redirecting to login...",
       });
 
-      setTimeout(() => router.push("/login"), 3000);
+      setTimeout(() => router.push("/login"), 2500);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      const errMsg = err.message || "Something went wrong";
       setStatus("error");
-      setMessage(errMsg);
+      setMessage(err.message || "Something went wrong");
 
       toast({
         title: "Error",
-        description: errMsg,
+        description: err.message || "Unblock failed",
         variant: "destructive",
       });
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
-      <div className="w-full max-w-md bg-zinc-900 border border-zinc-700 rounded-xl shadow-xl p-8 text-center">
-        
-        <div className="flex flex-col items-center gap-6">
-          
-          {/* Icon */}
-          <Unlock className="w-8 h-8 text-teal-400" />
-
-          {/* Heading */}
-          <h1 className="text-2xl font-semibold">
-            Unblock Your Cognivia Account
-          </h1>
-
-          {/* Description */}
-          <p className="text-zinc-400">
-            We detected unusual activity on your account. Click below to
-            securely restore access.
-          </p>
-
-          {/* Actions */}
-          {status === "idle" && (
-            <button
-              onClick={handleUnblock}
-              className="px-6 py-2 rounded-lg bg-teal-500 hover:bg-teal-600 transition"
-            >
-              Unblock My Account
-            </button>
-          )}
-
-          {status === "loading" && (
-            <div className="w-8 h-8 border-4 border-teal-400 border-t-transparent rounded-full animate-spin" />
-          )}
-
-          {(status === "success" || status === "error") && (
-            <p
-              className={`font-medium ${
-                status === "success"
-                  ? "text-green-400"
-                  : "text-red-400"
-              }`}
-            >
-              {message}
-            </p>
-          )}
-
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4">
+      <div className="w-full max-w-md bg-card border border-border rounded-2xl shadow-xl p-8 text-center space-y-6">
+        {/* Icon */}
+        <div className="flex justify-center">
+          <Unlock className="w-10 h-10 text-primary" />
         </div>
+
+        {/* Heading */}
+        <h1 className="text-2xl font-semibold">Unblock Your Account</h1>
+
+        {/* Description */}
+        <p className="text-sm text-muted-foreground">
+          We detected unusual activity. You can safely restore access below.
+        </p>
+
+        {/* Button / Loader / Status */}
+        {status === "idle" && (
+          <button
+            onClick={handleUnblock}
+            className="w-full py-2 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition"
+          >
+            Unblock Account
+          </button>
+        )}
+
+        {status === "loading" && (
+          <div className="flex justify-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {status === "success" && (
+          <p className="text-green-500 font-medium">{message}</p>
+        )}
+
+        {status === "error" && (
+          <p className="text-red-500 font-medium">{message}</p>
+        )}
       </div>
     </div>
   );
@@ -109,9 +106,8 @@ export default function UnblockAccountPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white gap-4">
-          <div className="w-10 h-10 border-4 border-teal-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-zinc-400">Loading Unblock Page...</p>
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >
