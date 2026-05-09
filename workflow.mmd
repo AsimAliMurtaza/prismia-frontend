@@ -1,43 +1,77 @@
 flowchart TD
-    A[Fetch Resumes] --> B[Extract Resume Content]
-    B --> C[Summarize / Vectorize Content]
-    C --> D[Rank Resumes Based on Role]
-    D --> E[Store Screened Resumes in DB]
-    E --> F[Optional: Feedback Loop for Learning]
 
-    subgraph Fetch
-        A1[From Email / Upload / Local Folder]
-        A --> A1
-    end
+%% =========================
+%% USERS & FRONTEND
+%% =========================
+U[HR Manager / User] --> FE[Next.js Frontend]
+FE --> BE[Next.js Backend API Layer]
+BE --> API[FastAPI Backend]
 
-    subgraph Extract
-        B1[Parse PDF / DOCX / TXT]
-        B2[Store text + metadata]
-        B --> B1 --> B2
-    end
+%% =========================
+%% AGENTIC AI PLATFORM CORE
+%% =========================
+API --> PLATFORM[LangGraph Orchestration Engine]
+PLATFORM --> HR["HR Agent (Domain-Specific)"]
 
-    subgraph Summarize
-        C1["Generate structured summary (skills, experience, projects)"]
-        C2[OR create embeddings for vector DB]
-        C --> C1
-        C --> C2
-    end
+%% =========================
+%% LLM LAYER
+%% =========================
+HR --> LLM["Groq LLM (Llama 3.1 / 70B)"]
 
-    subgraph Rank
-        D1[Compare summary/embeddings with job requirements]
-        D2[Compute score / rank]
-        D3[Optional: LLM explains ranking]
-        D --> D1 --> D2 --> D3
-    end
+%% =========================
+%% INTERACTIVE CHAT MODULE
+%% =========================
+FE --> CHAT[HR Chat Interface]
+CHAT <--> HR
+CHAT --> DB[(MongoDB)]
 
-    subgraph Store
-        E1[DB table: screened_resumes]
-        E2[Include summary, score, path, date]
-        E --> E1 --> E2
-    end
+%% =========================
+%% SEQUENTIAL WORKFLOW PIPELINE
+%% =========================
+HR --> W1[Candidate Screening & Ranking]
+W1 --> W2[Interview Scheduling]
+W2 --> W3[Onboarding]
 
-    subgraph Feedback
-        F1[Track shortlisted / rejected]
-        F2[Improve ranking or prompts]
-        F --> F1 --> F2
-    end
+W1 --> W2 --> W3
+
+%% =========================
+%% WORKFLOW 1 - SCREENING
+%% =========================
+W1 --> GMAIL1[Gmail API - Fetch Resumes]
+LLM --> W1
+
+%% =========================
+%% WORKFLOW 2 - INTERVIEW SCHEDULING
+%% =========================
+W2 --> GMAIL2[Gmail API - Send Emails]
+W3 --> GMAIL3[Gmail API - Acceptance/Rejection Emails]
+W2 --> MEET[Google Meet - Generate Links]
+W2 --> CAL[Google Calendar - Events]
+
+
+MEET --> CAL --> GMAIL2
+
+%% =========================
+%% WORKFLOW 3 - ONBOARDING
+%% =========================
+W3 --> DB
+
+%% =========================
+%% DATA ACCESS (CENTRALIZED)
+%% =========================
+W1 --> DB
+W2 --> DB
+
+LLM --> W2
+LLM --> W3
+
+%% =========================
+%% STYLING
+%% =========================
+classDef core fill:#eafff3,stroke:#22c55e,color:#0f172a;
+classDef api fill:#e0f2fe,stroke:#0ea5e9,color:#0f172a;
+classDef db fill:#fff7ed,stroke:#f59e0b,color:#0f172a;
+
+class HR,PLATFORM,LLM core;
+class API,BE api;
+class DB db;
