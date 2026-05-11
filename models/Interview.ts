@@ -1,27 +1,19 @@
-import mongoose, { Schema, Types } from "mongoose"
+// models/Interview.js
 
-const InterviewSchema = new Schema(
+import mongoose from "mongoose"
+
+const InterviewSchema = new mongoose.Schema(
   {
     candidate_id: {
-      type: Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Candidate",
-      required: true,
-    },
-
-    job_id: {
-      type: Types.ObjectId,
-      ref: "Job",
       required: true,
     },
 
     job_title: {
       type: String,
       required: true,
-    },
-
-    meet_link: {
-      type: String,
-      required: true,
+      trim: true,
     },
 
     scheduled_at: {
@@ -29,26 +21,29 @@ const InterviewSchema = new Schema(
       required: true,
     },
 
+    meet_link: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
     status: {
       type: String,
-      enum: [
-        "scheduled",
-        "completed",
-        "cancelled",
-        "rescheduled",
-        "no-show",
-      ],
+      enum: ["scheduled", "completed", "cancelled", "pending"],
       default: "scheduled",
     },
 
+    
     interviewer_email: {
       type: String,
       required: true,
+      trim: true,
+      lowercase: true,
     },
 
-    notes: {
-      type: String,
-      default: "",
+    email_pending: {
+      type: Boolean,
+      default: true,
     },
 
     email_sent: {
@@ -56,8 +51,19 @@ const InterviewSchema = new Schema(
       default: false,
     },
 
+    email_processing: {
+      type: Boolean,
+      default: false,
+    },
+
     email_sent_at: {
       type: Date,
+      default: null,
+    },
+
+    slot_index: {
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -67,22 +73,6 @@ const InterviewSchema = new Schema(
     },
   }
 )
-
-/* =========================
-   INDEXES
-========================= */
-
-InterviewSchema.index({ candidate_id: 1 })
-
-InterviewSchema.index({ job_id: 1 })
-
-InterviewSchema.index({ scheduled_at: 1 })
-
-InterviewSchema.index({ status: 1 })
-
-InterviewSchema.index({ interviewer_email: 1 })
-
-InterviewSchema.index({ created_at: -1 })
 
 export default mongoose.models.Interview ||
   mongoose.model("Interview", InterviewSchema)
